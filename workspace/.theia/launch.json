@@ -1,4 +1,14 @@
 {
     "version": "0.2.0",
-    "configurations": []
+    "configurations": [
+        {
+            "name": "LABstarter",
+            "type": "ccs-debug",
+            "request": "launch",
+            "projectInfo": {
+                "name": "LABstarter",
+                "resourceId": "/LABstarter"
+            }
+        }
+    ]
 }
