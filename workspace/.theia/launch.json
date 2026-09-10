@@ -2,12 +2,12 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "LABstarter",
+            "name": "HW_1",
             "type": "ccs-debug",
             "request": "launch",
             "projectInfo": {
-                "name": "LABstarter",
-                "resourceId": "/LABstarter"
+                "name": "HW_1",
+                "resourceId": "/HW_1"
             }
         }
     ]
