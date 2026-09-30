@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?ccsproject version="1.0"?>
+<projectOptions>
+	<ccsVariant value="50:Theia-based"/>
+	<ccsVersion value="70.5.1"/>
+	<deviceFamily value="C2000"/>
+	<executableActions value=""/>
+	<createSlaveProjects value=""/>
+	<templateProperties value="id=HW2code.projectspec.HW2code"/>
+	<origin value="C:\lizilin2\ME461_hw_repo\C2000Ware_26_01_00_00\device_support\f2837xd\examples\cpu1\HW2code\cpu01\ccs\HW2code.projectspec"/>
+	<filesToOpen value=""/>
+</projectOptions>

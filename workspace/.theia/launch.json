@@ -9,6 +9,15 @@
                 "name": "HW_1",
                 "resourceId": "/HW_1"
             }
+        },
+        {
+            "name": "HW2code",
+            "type": "ccs-debug",
+            "request": "launch",
+            "projectInfo": {
+                "name": "HW2code",
+                "resourceId": "/HW2code"
+            }
         }
     ]
 }
