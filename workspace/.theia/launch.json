@@ -18,6 +18,15 @@
                 "name": "HW2code",
                 "resourceId": "/HW2code"
             }
+        },
+        {
+            "name": "HW3",
+            "type": "ccs-debug",
+            "request": "launch",
+            "projectInfo": {
+                "name": "HW3",
+                "resourceId": "/HW3"
+            }
         }
     ]
 }
