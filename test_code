@@ -1,7 +1,7 @@
 //#############################################################################
-// FILE:   LABstarter_main.c
+// FILE:   HW3_Maze_LabOnly.c
 //
-// TITLE:  Lab Starter
+// TITLE:  ME 461 HW3 Two-Servo Maze (Lab 3 + Lab 4)
 //#############################################################################
 
 // Included Files
@@ -47,6 +47,9 @@ float servoAngleY = 0.0;
 // Adjust these after mounting the horns until maze is level.
 float servoCenterX = 0.0;
 float servoCenterY = 0.0;
+// Measured joystick center values; change after checking ADC results.
+float joyCenterX = 2048.0;
+float joyCenterY = 2048.0;
 // Set to 1 only after testing free servos and leveling the platform.
 volatile int16_t joystickEnable = 0;
 
@@ -313,13 +316,14 @@ void main(void)
     AdcaRegs.ADCINTSEL1N2.bit.INT1SEL = 1;
     AdcaRegs.ADCINTSEL1N2.bit.INT1E = 1;
     AdcaRegs.ADCINTFLGCLR.bit.ADCINT1 = 1;
-    AdcaRegs.ADCINTOVFCLR.bit.ADCINT1 = 1;
     EDIS;
 
     // Start the Lab 4 ADC sampling timer after configuring ADCA.
+    EALLOW;
     EPwm5Regs.TBCTR = 0;
     EPwm5Regs.ETSEL.bit.SOCAEN = 1;
     EPwm5Regs.TBCTL.bit.CTRMODE = 0;
+    EDIS;
 
     // HW3: EPWM8A/B RC servos copied from Lab 3.
     EPwm8Regs.TBCTL.bit.CTRMODE = 0;
@@ -335,6 +339,12 @@ void main(void)
     EPwm8Regs.AQCTLB.bit.CBU = 1;
     EPwm8Regs.AQCTLB.bit.ZRO = 2;
     EPwm8Regs.TBPHS.bit.TBPHS = 0;
+
+    // Lab 3: disable the pull-ups on the two PWM outputs.
+    EALLOW;
+    GpioCtrlRegs.GPAPUD.bit.GPIO14 = 1;
+    GpioCtrlRegs.GPAPUD.bit.GPIO15 = 1;
+    EDIS;
 
     // Enable CPU int1 which is connected to CPU-Timer 0, CPU int13
     // which is connected to CPU-Timer 1, and CPU int 14, which is connected
@@ -363,7 +373,8 @@ void main(void)
     while(1)
     {
         if (UARTPrint == 1 ) {
-			serial_printf(&SerialA,"Num Timer2:%ld Num SerialRX: %ld\r\n",numTimer2calls,numRXA);
+			serial_printf(&SerialA,"ADCA count:%ld X:%d Y:%d Servo X:%f Servo Y:%f\r\n",
+                adcacount,adca2result,adca3result,servoAngleX,servoAngleY);
             UARTPrint = 0;
         }
     }
@@ -399,8 +410,8 @@ __interrupt void cpu_timer0_isr(void)
     // Joystick ADC data was sampled by the Lab 4 ADCA interrupt.
     if (joystickEnable == 1 && adcacount > 0) {
         // Start with a small +/- 10 degree command range.
-        servoAngleX = servoCenterX + ((float)adca2result - 2048.0) * (10.0 / 2048.0);
-        servoAngleY = servoCenterY + ((float)adca3result - 2048.0) * (10.0 / 2048.0);
+        servoAngleX = servoCenterX + ((float)adca2result - joyCenterX) * (10.0 / 2048.0);
+        servoAngleY = servoCenterY + ((float)adca3result - joyCenterY) * (10.0 / 2048.0);
     } else {
         servoAngleX = servoCenterX;
         servoAngleY = servoCenterY;
@@ -457,10 +468,6 @@ __interrupt void ADCA_ISR(void) {
     adca2result = AdcaResultRegs.ADCRESULT0;
     adca3result = AdcaResultRegs.ADCRESULT1;
     adcacount++;
-    // Recover from an ADC interrupt overflow if one occurred.
-    if (AdcaRegs.ADCINTOVF.bit.ADCINT1 == 1) {
-        AdcaRegs.ADCINTOVFCLR.bit.ADCINT1 = 1;
-    }
     AdcaRegs.ADCINTFLGCLR.bit.ADCINT1 = 1;
     PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
 }
